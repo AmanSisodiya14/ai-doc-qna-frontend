@@ -9,8 +9,12 @@ import MessageInput from "../components/MessageInput";
 import SummaryPanel from "../components/SummaryPanel";
 import VideoPlayer from "../components/VideoPlayer";
 import api from "../services/api";
-import { setSelectedFile } from "../redux/fileSlice";
-import { addMessage, setChatLoading } from "../redux/chatSlice";
+import { setSelectedFile, removeUploadedFile } from "../redux/fileSlice";
+import {
+  addMessage,
+  setChatLoading,
+  clearChatForFile,
+} from "../redux/chatSlice";
 
 const buildMessage = (role, content, timestamp) => ({
   id: crypto.randomUUID(),
@@ -89,7 +93,16 @@ const ChatPage = () => {
           files={uploadedFiles}
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
-          onUploadClick={() => navigate("/dashboard")}
+          onDelete={(id) => {
+            if (window.confirm("Are you sure you want to delete this file?")) {
+              dispatch(removeUploadedFile(id));
+              dispatch(clearChatForFile(id));
+              toast.success("File deleted successfully");
+              if (id === fileId) {
+                navigate("/dashboard");
+              }
+            }
+          }}
         />
 
         <main className="grid w-full grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_360px]">

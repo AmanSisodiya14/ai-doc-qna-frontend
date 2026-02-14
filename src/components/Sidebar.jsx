@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const Sidebar = ({ files, open, onClose }) => {
+const Sidebar = ({ files, open, onClose, onDelete }) => {
   return (
     <>
       <div
@@ -32,17 +32,46 @@ const Sidebar = ({ files, open, onClose }) => {
             </div>
           ) : (
             files.map((file) => (
-              <Link
+              <div
                 key={file.id}
-                to={`/chat/${file.id}`}
-                onClick={onClose}
-                className="block rounded-xl border border-slate-200 p-3 transition hover:border-brand-500 hover:bg-brand-50"
+                className="group relative flex items-center rounded-xl border border-slate-200 p-3 transition hover:border-brand-500 hover:bg-brand-50"
               >
-                <p className="truncate text-sm font-medium text-slate-800">
-                  {file.name}
-                </p>
-                <p className="text-xs text-slate-500">{file.type}</p>
-              </Link>
+                <Link
+                  to={`/chat/${file.id}`}
+                  onClick={onClose}
+                  className="flex-1 overflow-hidden"
+                >
+                  <p className="truncate text-sm font-medium text-slate-800">
+                    {file.name}
+                  </p>
+                  <p className="text-xs text-slate-500">{file.type}</p>
+                </Link>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onDelete(file.id);
+                  }}
+                  className="ml-2 hidden rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500 group-hover:block"
+                  title="Delete file"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M3 6h18" />
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                  </svg>
+                </button>
+              </div>
             ))
           )}
         </div>

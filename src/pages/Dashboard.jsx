@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../services/api";
-import { addUploadedFile } from "../redux/fileSlice";
+import { addUploadedFile, removeUploadedFile } from "../redux/fileSlice";
+import { clearChatForFile } from "../redux/chatSlice";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import FileUploader from "../components/FileUploader";
@@ -24,6 +25,14 @@ const Dashboard = () => {
       ),
     [uploadedFiles],
   );
+
+  const handleDeleteFile = (fileId) => {
+    if (window.confirm("Are you sure you want to delete this file?")) {
+      dispatch(removeUploadedFile(fileId));
+      dispatch(clearChatForFile(fileId));
+      toast.success("File deleted successfully");
+    }
+  };
 
   const handleUpload = async (file) => {
     const formData = new FormData();
@@ -67,7 +76,7 @@ const Dashboard = () => {
           files={sortedFiles}
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
-          onUploadClick={() => document.getElementById("file-upload")?.click()}
+          onDelete={handleDeleteFile}
         />
 
         <main className="w-full space-y-4">
@@ -84,7 +93,11 @@ const Dashboard = () => {
           ) : (
             <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {sortedFiles.map((file) => (
-                <FileCard key={file.id} file={file} />
+                <FileCard
+                  key={file.id}
+                  file={file}
+                  onDelete={handleDeleteFile}
+                />
               ))}
             </section>
           )}

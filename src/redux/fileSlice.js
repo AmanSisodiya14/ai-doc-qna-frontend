@@ -23,6 +23,11 @@ const fileSlice = createSlice({
       state.uploadedFiles = [];
       state.selectedFile = null;
     },
+    removeUploadedFile: (state, action) => {
+      state.uploadedFiles = state.uploadedFiles.filter(
+        (file) => file.id !== action.payload
+      );
+    },
   },
 });
 
@@ -31,5 +36,6 @@ export const {
   setUploadedFiles,
   setSelectedFile,
   clearFiles,
+  removeUploadedFile,
 } = fileSlice.actions;
 export default fileSlice.reducer;
