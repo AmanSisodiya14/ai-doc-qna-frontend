@@ -38,7 +38,11 @@ const Login = () => {
       dispatch(
         setCredentials({
           token: data.data.token,
-          user: { email: data.data.email, userId: data.data.userId },
+          user: {
+            name: data.data.name,
+            email: data.data.email,
+            userId: data.data.userId,
+          },
         }),
       );
 

@@ -19,9 +19,17 @@ const fileSlice = createSlice({
     setSelectedFile: (state, action) => {
       state.selectedFile = action.payload;
     },
+    clearFiles: (state) => {
+      state.uploadedFiles = [];
+      state.selectedFile = null;
+    },
   },
 });
 
-export const { addUploadedFile, setUploadedFiles, setSelectedFile } =
-  fileSlice.actions;
+export const {
+  addUploadedFile,
+  setUploadedFiles,
+  setSelectedFile,
+  clearFiles,
+} = fileSlice.actions;
 export default fileSlice.reducer;

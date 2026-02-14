@@ -30,9 +30,18 @@ const chatSlice = createSlice({
       state.messagesByFile[fileId] = [];
       state.loadingByFile[fileId] = false;
     },
+    clearAllChats: (state) => {
+      state.messagesByFile = {};
+      state.loadingByFile = {};
+    },
   },
 });
 
-export const { setMessagesForFile, addMessage, setChatLoading, clearChatForFile } =
-  chatSlice.actions;
+export const {
+  setMessagesForFile,
+  addMessage,
+  setChatLoading,
+  clearChatForFile,
+  clearAllChats,
+} = chatSlice.actions;
 export default chatSlice.reducer;
