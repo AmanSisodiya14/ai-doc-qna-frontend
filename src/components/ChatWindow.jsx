@@ -5,9 +5,29 @@ import LoadingSpinner from "./LoadingSpinner";
 const ChatWindow = ({ messages, loading, onPlayTimestamp }) => {
   const containerRef = useRef(null);
 
+  const prevMessagesLength = useRef(0);
+
   useEffect(() => {
     if (!containerRef.current) return;
-    containerRef.current.scrollTop = containerRef.current.scrollHeight;
+
+    const element = containerRef.current;
+    const newLength = messages.length;
+    const oldLength = prevMessagesLength.current;
+
+    if (loading) {
+      element.scrollTo({ top: element.scrollHeight, behavior: "smooth" });
+    } else if (newLength > oldLength) {
+      if (oldLength === 0) {
+        element.scrollTop = element.scrollHeight;
+      } else {
+        const lastElement = element.lastElementChild;
+        if (lastElement) {
+          lastElement.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    }
+
+    prevMessagesLength.current = newLength;
   }, [messages, loading]);
 
   return (
