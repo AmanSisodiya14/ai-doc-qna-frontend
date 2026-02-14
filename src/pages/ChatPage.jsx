@@ -28,12 +28,16 @@ const ChatPage = () => {
   const navigate = useNavigate();
 
   const uploadedFiles = useSelector((state) => state.files.uploadedFiles);
-  const messages = useSelector((state) => state.chat.messagesByFile[fileId] || []);
-  const loading = useSelector((state) => state.chat.loadingByFile[fileId] || false);
+  const messages = useSelector(
+    (state) => state.chat.messagesByFile[fileId] || [],
+  );
+  const loading = useSelector(
+    (state) => state.chat.loadingByFile[fileId] || false,
+  );
 
   const currentFile = useMemo(
     () => uploadedFiles.find((file) => String(file.id) === String(fileId)),
-    [uploadedFiles, fileId]
+    [uploadedFiles, fileId],
   );
 
   useEffect(() => {
@@ -55,8 +59,10 @@ const ChatPage = () => {
 
       const aiMessage = buildMessage(
         "assistant",
-        data.answer || "No answer returned.",
-        data.timestamp === 0 || data.timestamp ? data.timestamp : undefined
+        data.data.answer || "No answer returned.",
+        data.data.timestamp === 0 || data.data.timestamp
+          ? data.data.timestamp
+          : undefined,
       );
 
       dispatch(addMessage({ fileId, message: aiMessage }));

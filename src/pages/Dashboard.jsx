@@ -20,9 +20,9 @@ const Dashboard = () => {
   const sortedFiles = useMemo(
     () =>
       [...uploadedFiles].sort(
-        (a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt)
+        (a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt),
       ),
-    [uploadedFiles]
+    [uploadedFiles],
   );
 
   const handleUpload = async (file) => {
@@ -42,15 +42,11 @@ const Dashboard = () => {
           setProgress(Math.round((event.loaded * 100) / event.total));
         },
       });
-
       const fileMeta = {
-        id: data.id || crypto.randomUUID(),
-        name: data.name || file.name,
-        type: data.type || file.type,
-        typeLabel:
-          data.typeLabel || file.type.split("/")[0]?.toUpperCase() || "FILE",
-        uploadedAt: data.uploadedAt || new Date().toISOString(),
-        url: data.url || "",
+        id: data.data.fileId,
+        name: data.data.fileName || file.name,
+        type: data.data.fileType || file.type,
+        uploadedAt: new Date().toISOString(),
       };
 
       dispatch(addUploadedFile(fileMeta));

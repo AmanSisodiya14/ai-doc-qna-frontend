@@ -14,7 +14,7 @@ const SummaryPanel = ({ fileId }) => {
       setLoading(true);
       try {
         const { data } = await api.get(`/api/files/${fileId}/summary`);
-        setSummary(data.summary || "No summary available yet.");
+        setSummary(data.data.summary || "No summary available yet.");
       } catch (error) {
         toast.error(error.message);
         setSummary("Failed to load summary.");
