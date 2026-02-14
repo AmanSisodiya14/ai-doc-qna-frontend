@@ -62,6 +62,7 @@ const Dashboard = () => {
       toast.success("File uploaded successfully");
       navigate(`/chat/${fileMeta.id}`);
     } catch (error) {
+      console.log("error", error);
       toast.error(error.message);
     } finally {
       setUploading(false);

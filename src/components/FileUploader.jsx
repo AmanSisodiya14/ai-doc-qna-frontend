@@ -16,7 +16,7 @@ const FileUploader = ({ onUpload, uploading, progress }) => {
       <input
         id="file-upload"
         type="file"
-        accept=".pdf,.mp3,.wav,.mp4"
+        accept=".pdf,.mp3,.wav,.mp4,.mov,.avi,.mkv,.webm"
         className="hidden"
         onChange={(e) => handleFile(e.target.files?.[0])}
         disabled={uploading}
@@ -31,7 +31,7 @@ const FileUploader = ({ onUpload, uploading, progress }) => {
         <p className="text-sm font-medium text-slate-700">
           Drag & drop a file here or click to upload
         </p>
-        <p className="text-xs text-slate-500">Accepted: PDF, MP3, WAV, MP4</p>
+        <p className="text-xs text-slate-500">Accepted: PDF, Audio, Video</p>
       </label>
 
       {uploading && (

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import api from "../services/api";
 import LoadingSpinner from "./LoadingSpinner";
@@ -8,9 +8,14 @@ const SummaryPanel = ({ fileId }) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(true);
 
+  const loadedFileId = useRef(null);
+
   useEffect(() => {
     const fetchSummary = async () => {
       if (!fileId) return;
+      if (loadedFileId.current === fileId) return;
+
+      loadedFileId.current = fileId;
       setLoading(true);
       try {
         const { data } = await api.get(`/api/files/${fileId}/summary`);
@@ -18,6 +23,7 @@ const SummaryPanel = ({ fileId }) => {
       } catch (error) {
         toast.error(error.message);
         setSummary("Failed to load summary.");
+        loadedFileId.current = null; // Allow retry on error
       } finally {
         setLoading(false);
       }
