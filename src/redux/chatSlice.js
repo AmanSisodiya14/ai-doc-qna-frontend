@@ -12,11 +12,15 @@ const normalizeMessage = (message = {}) => {
     : hasValue(timestamp)
       ? Number(timestamp)
       : null;
-  const normalizedEndTime = hasValue(rest.endTime) ? Number(rest.endTime) : null;
+  const normalizedEndTime = hasValue(rest.endTime)
+    ? Number(rest.endTime)
+    : null;
 
   return {
     ...rest,
-    startTime: Number.isFinite(normalizedStartTime) ? normalizedStartTime : null,
+    startTime: Number.isFinite(normalizedStartTime)
+      ? normalizedStartTime
+      : null,
     endTime: Number.isFinite(normalizedEndTime) ? normalizedEndTime : null,
   };
 };
@@ -54,10 +58,24 @@ const chatSlice = createSlice({
     },
     setSelectedTimestamp: (state, action) => {
       const { fileId, timestamp } = action.payload;
+
+      if (timestamp === null || timestamp === undefined) {
+        state.selectedTimestampByFile[fileId] = null;
+        return;
+      }
+
       const parsed = Number(timestamp);
-      state.selectedTimestampByFile[fileId] =
-        Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+
+      if (Number.isFinite(parsed) && parsed >= 0) {
+        state.selectedTimestampByFile[fileId] = {
+          timestamp: parsed,
+          playId: Date.now(), // 🔥 always new trigger
+        };
+      } else {
+        state.selectedTimestampByFile[fileId] = null;
+      }
     },
+
     clearChatForFile: (state, action) => {
       const fileId = action.payload;
       state.messagesByFile[fileId] = [];

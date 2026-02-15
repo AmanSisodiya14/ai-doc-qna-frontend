@@ -44,7 +44,7 @@ const ChatPage = () => {
   const loading = useSelector(
     (state) => state.chat.loadingByFile[fileId] || false,
   );
-  const selectedTimestamp = useSelector(
+  const selectedTimestampObj = useSelector(
     (state) => state.chat.selectedTimestampByFile[fileId] ?? null,
   );
 
@@ -67,6 +67,15 @@ const ChatPage = () => {
       }),
     [messages],
   );
+
+  const [activeFileId, setActiveFileId] = useState(null);
+
+  useEffect(() => {
+    if (fileId && fileId !== activeFileId) {
+      dispatch(setSelectedTimestamp({ fileId, timestamp: null }));
+      setActiveFileId(fileId);
+    }
+  }, [fileId, activeFileId, dispatch]);
 
   useEffect(() => {
     if (currentFile) {
@@ -138,9 +147,10 @@ const ChatPage = () => {
             <ChatWindow
               messages={messages}
               loading={loading}
-              onPlayTimestamp={(timestamp) =>
-                dispatch(setSelectedTimestamp({ fileId, timestamp }))
-              }
+              onPlayTimestamp={(timestamp) => {
+                console.log("timestamp", timestamp);
+                dispatch(setSelectedTimestamp({ fileId, timestamp }));
+              }}
             />
             <MessageInput onSend={handleSend} disabled={loading} />
           </section>
@@ -150,7 +160,12 @@ const ChatPage = () => {
             {hasTimestamps && (
               <VideoPlayer
                 mediaUrl={mediaUrl}
-                startTime={selectedTimestamp}
+                startTime={
+                  fileId === activeFileId
+                    ? selectedTimestampObj?.timestamp
+                    : null
+                }
+                playId={selectedTimestampObj?.playId}
                 fileType={fileType}
               />
             )}
