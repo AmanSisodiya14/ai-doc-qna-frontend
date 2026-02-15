@@ -2,9 +2,13 @@ import formatTime from "../utils/formatTime";
 
 const ChatMessage = ({ message, onPlayTimestamp }) => {
   const isUser = message.role === "user";
+
   const parsedStartTime = Number(message.startTime);
   const hasStartTime =
-    !isUser && Number.isFinite(parsedStartTime) && parsedStartTime >= 0;
+    !isUser &&
+    message.startTime !== null &&
+    Number.isFinite(parsedStartTime) &&
+    parsedStartTime >= 0;
 
   return (
     <div

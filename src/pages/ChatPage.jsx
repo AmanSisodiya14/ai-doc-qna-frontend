@@ -95,10 +95,9 @@ const ChatPage = () => {
       });
 
       const responseData = data?.data || {};
-      const startTime = toNullableNumber(
-        responseData.startTime ?? responseData.timestamp ?? null,
-      );
-      const endTime = toNullableNumber(responseData.endTime ?? null);
+      const startTime =
+        responseData.startTime ?? responseData.timestamp ?? null;
+      const endTime = responseData.endTime ?? null;
       const aiMessage = buildMessage(
         "assistant",
         responseData.answer || "No answer returned.",
