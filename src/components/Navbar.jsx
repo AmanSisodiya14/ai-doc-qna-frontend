@@ -38,15 +38,15 @@ const Navbar = ({ onMenuClick }) => {
               Ask anything from your uploaded files
             </p>
           </div>
-        </div>
-
-        <div className="flex items-center gap-4">
           <Link
             to="/dashboard"
             className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors"
           >
             Dashboard
           </Link>
+        </div>
+
+        <div className="flex items-center gap-4">
           {user && (
             <div className="hidden text-right sm:block">
               <p className="text-sm font-medium text-slate-700">{user.name}</p>
