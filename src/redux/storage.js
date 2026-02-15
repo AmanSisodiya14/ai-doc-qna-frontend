@@ -48,6 +48,8 @@ export const loadChat = () =>
   parseJSON(localStorage.getItem(STORAGE_KEYS.CHAT), {
     messagesByFile: {},
     loadingByFile: {},
+    selectedTimestampByFile: {},
+    mediaReadyByFile: {},
   });
 
 export const saveChat = (state) => {
@@ -56,6 +58,8 @@ export const saveChat = (state) => {
     JSON.stringify({
       messagesByFile: state.messagesByFile,
       loadingByFile: state.loadingByFile,
+      selectedTimestampByFile: state.selectedTimestampByFile,
+      mediaReadyByFile: state.mediaReadyByFile,
     })
   );
 };

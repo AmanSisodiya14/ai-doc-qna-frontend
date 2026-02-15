@@ -55,6 +55,8 @@ const Dashboard = () => {
         id: data.data.fileId,
         name: data.data.fileName || file.name,
         type: data.data.fileType || file.type,
+        mediaUrl:
+          "http://localhost:8080/media/" + data.data.storagePath || null,
         uploadedAt: new Date().toISOString(),
       };
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -13,20 +13,26 @@ import { setSelectedFile, removeUploadedFile } from "../redux/fileSlice";
 import {
   addMessage,
   setChatLoading,
+  setSelectedTimestamp,
   clearChatForFile,
 } from "../redux/chatSlice";
 
-const buildMessage = (role, content, timestamp) => ({
+const toNullableNumber = (value) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : null;
+};
+
+const buildMessage = (role, content, startTime = null, endTime = null) => ({
   id: crypto.randomUUID(),
   role,
   content,
-  timestamp,
+  startTime,
+  endTime,
   createdAt: Date.now(),
 });
 
 const ChatPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTimestamp, setActiveTimestamp] = useState(null);
   const { fileId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,10 +44,28 @@ const ChatPage = () => {
   const loading = useSelector(
     (state) => state.chat.loadingByFile[fileId] || false,
   );
+  const selectedTimestamp = useSelector(
+    (state) => state.chat.selectedTimestampByFile[fileId] ?? null,
+  );
 
   const currentFile = useMemo(
     () => uploadedFiles.find((file) => String(file.id) === String(fileId)),
     [uploadedFiles, fileId],
+  );
+  const mediaUrl = useMemo(() => currentFile?.mediaUrl || "", [currentFile]);
+  const fileType = currentFile?.type || currentFile?.fileType || "";
+
+  const hasTimestamps = useMemo(
+    () =>
+      messages.some((msg) => {
+        const startTime = Number(msg.startTime);
+        const endTime = Number(msg.endTime);
+        return (
+          (Number.isFinite(startTime) && startTime !== 0) ||
+          (Number.isFinite(endTime) && endTime !== 0)
+        );
+      }),
+    [messages],
   );
 
   useEffect(() => {
@@ -61,12 +85,16 @@ const ChatPage = () => {
         message: text,
       });
 
+      const responseData = data?.data || {};
+      const startTime = toNullableNumber(
+        responseData.startTime ?? responseData.timestamp ?? null,
+      );
+      const endTime = toNullableNumber(responseData.endTime ?? null);
       const aiMessage = buildMessage(
         "assistant",
-        data.data.answer || "No answer returned.",
-        data.data.timestamp === 0 || data.data.timestamp
-          ? data.data.timestamp
-          : undefined,
+        responseData.answer || "No answer returned.",
+        startTime,
+        endTime,
       );
 
       dispatch(addMessage({ fileId, message: aiMessage }));
@@ -110,14 +138,22 @@ const ChatPage = () => {
             <ChatWindow
               messages={messages}
               loading={loading}
-              onPlayTimestamp={(ts) => setActiveTimestamp(ts)}
+              onPlayTimestamp={(timestamp) =>
+                dispatch(setSelectedTimestamp({ fileId, timestamp }))
+              }
             />
             <MessageInput onSend={handleSend} disabled={loading} />
           </section>
 
           <aside className="space-y-4">
             <SummaryPanel fileId={fileId} />
-            <VideoPlayer file={currentFile} timestamp={activeTimestamp} />
+            {hasTimestamps && (
+              <VideoPlayer
+                mediaUrl={mediaUrl}
+                startTime={selectedTimestamp}
+                fileType={fileType}
+              />
+            )}
           </aside>
         </main>
       </div>
